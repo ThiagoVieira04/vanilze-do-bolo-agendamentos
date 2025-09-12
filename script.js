@@ -14,9 +14,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// ✅ Tudo dentro do DOMContentLoaded, exceto os imports
 document.addEventListener("DOMContentLoaded", () => {
-  // Teste de conexão
+  // ✅ Registrar Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log("Service Worker registrado"))
+      .catch(err => console.error("Erro ao registrar SW:", err));
+  }
+
+  // ✅ Teste de conexão com Firebase
   window.testFirebase = () => {
     const teste = { mensagem: "Conexão funcionando!", hora: new Date().toISOString() };
     push(ref(database, "agendamentos"), teste)
@@ -24,14 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Erro no teste:", err));
   };
 
-  // Mostrar campos extras se necessário
+  // ✅ Mostrar campos extras de docinhos
   document.querySelectorAll('input[name="more-sweets"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
       document.getElementById("extra-sweets-fields").classList.toggle("hidden", e.target.value !== "sim");
     });
   });
 
-  // Envio do formulário
+  // ✅ Envio do formulário
   document.getElementById("task-form").addEventListener("submit", function(e) {
     e.preventDefault();
 
