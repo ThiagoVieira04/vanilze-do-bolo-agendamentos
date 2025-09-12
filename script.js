@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Registrar Service Worker
+  // ✅ Registrar Service Worker para PWA
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
       .then(() => console.log("Service Worker registrado"))
@@ -38,35 +38,40 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ✅ Envio do formulário
-  document.getElementById("task-form").addEventListener("submit", function(e) {
-    e.preventDefault();
+  const form = document.getElementById("task-form");
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
 
-    const maisDocinhos = document.querySelector('input[name="more-sweets"]:checked').value;
-    const agendamento = {
-      encomenda: document.getElementById("order-name").value,
-      cliente: document.getElementById("client-name").value,
-      whatsapp: document.getElementById("client-whatsapp").value,
-      recheios: document.getElementById("cake-fillings").value,
-      docinho: document.getElementById("sweets").value,
-      maisDocinhos: maisDocinhos,
-      quaisDocinhos: maisDocinhos === "sim" ? document.getElementById("which-sweets").value : "",
-      qtdDocinhos: maisDocinhos === "sim" ? document.getElementById("sweets-quantity").value : "",
-      data: document.getElementById("order-date").value,
-      lembrete: document.getElementById("reminder-time").value,
-      entrega: document.getElementById("delivery-time").value
-    };
+      const maisDocinhos = document.querySelector('input[name="more-sweets"]:checked')?.value || "nao";
+      const agendamento = {
+        encomenda: document.getElementById("order-name")?.value || "",
+        cliente: document.getElementById("client-name")?.value || "",
+        whatsapp: document.getElementById("client-whatsapp")?.value || "",
+        recheios: document.getElementById("cake-fillings")?.value || "",
+        docinho: document.getElementById("sweets")?.value || "",
+        maisDocinhos: maisDocinhos,
+        quaisDocinhos: maisDocinhos === "sim" ? document.getElementById("which-sweets")?.value || "" : "",
+        qtdDocinhos: maisDocinhos === "sim" ? document.getElementById("sweets-quantity")?.value || "" : "",
+        data: document.getElementById("order-date")?.value || "",
+        lembrete: document.getElementById("reminder-time")?.value || "",
+        entrega: document.getElementById("delivery-time")?.value || ""
+      };
 
-    console.log("Enviando agendamento:", agendamento);
+      console.log("Enviando agendamento:", agendamento);
 
-    push(ref(database, "agendamentos"), agendamento)
-      .then(() => {
-        alert("Agendamento salvo com sucesso!");
-        document.getElementById("task-form").reset();
-        document.getElementById("extra-sweets-fields").classList.add("hidden");
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar agendamento:", error);
-        alert("Erro ao salvar. Tente novamente.");
-      });
-  });
+      push(ref(database, "agendamentos"), agendamento)
+        .then(() => {
+          alert("Agendamento salvo com sucesso!");
+          form.reset();
+          document.getElementById("extra-sweets-fields")?.classList.add("hidden");
+        })
+        .catch((error) => {
+          console.error("Erro ao salvar agendamento:", error);
+          alert("Erro ao salvar. Tente novamente.");
+        });
+    });
+  } else {
+    console.error("Formulário 'task-form' não encontrado no DOM.");
+  }
 });
