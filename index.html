@@ -70,10 +70,11 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
     import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
-    // Configuração do Firebase
+    // Configuração do Firebase com databaseURL incluído
     const firebaseConfig = {
       apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
       authDomain: "vanilze-do-bolo-agendamentos.firebaseapp.com",
+      databaseURL: "https://vanilze-do-bolo-agendamentos-default-rtdb.firebaseio.com", // ← ESSENCIAL!
       projectId: "vanilze-do-bolo-agendamentos",
       storageBucket: "vanilze-do-bolo-agendamentos.firebasestorage.app",
       messagingSenderId: "975342027639",
