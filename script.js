@@ -1,20 +1,21 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
+  authDomain: "vanilze-do-bolo-agendamentos.firebaseapp.com",
+  databaseURL: "https://vanilze-do-bolo-agendamentos-default-rtdb.firebaseio.com",
+  projectId: "vanilze-do-bolo-agendamentos",
+  storageBucket: "vanilze-do-bolo-agendamentos.firebasestorage.app",
+  messagingSenderId: "975342027639",
+  appId: "1:975342027639:web:61d5077c9e7f32d59f1772"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+// ✅ Tudo dentro do DOMContentLoaded, exceto os imports
 document.addEventListener("DOMContentLoaded", () => {
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
-    authDomain: "vanilze-do-bolo-agendamentos.firebaseapp.com",
-    databaseURL: "https://vanilze-do-bolo-agendamentos-default-rtdb.firebaseio.com",
-    projectId: "vanilze-do-bolo-agendamentos",
-    storageBucket: "vanilze-do-bolo-agendamentos.firebasestorage.app",
-    messagingSenderId: "975342027639",
-    appId: "1:975342027639:web:61d5077c9e7f32d59f1772"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
-
   // Teste de conexão
   window.testFirebase = () => {
     const teste = { mensagem: "Conexão funcionando!", hora: new Date().toISOString() };
