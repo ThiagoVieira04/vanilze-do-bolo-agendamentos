@@ -1,64 +1,62 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vanilze do Bolo - Agendamentos</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#FF69B4">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div id="app">
-    <div id="home-screen" class="screen active">
-      <img src="logo.png" alt="Logo Vanilze do Bolo" class="logo">
-      <h1>Bem vinda Vanilze</h1>
-      <button id="goToFormBtn">TOQUE AQUI PARA AGENDAR SUA TAREFA!</button>
-      <button id="goToTasksBtn" class="secondary">VER AGENDAMENTOS</button>
-      <button onclick="testFirebase()">TESTAR CONEXÃO</button>
-    </div>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
-    <div id="form-screen" class="screen">
-      <form id="task-form">
-        <h2>DIGITE O PEDIDO!</h2>
-        <input type="text" id="order-name" placeholder="Nome da encomenda" required>
-        <input type="text" id="client-name" placeholder="Nome do cliente" required>
-        <input type="tel" id="client-whatsapp" placeholder="WhatsApp do cliente" required>
-        <input type="text" id="cake-fillings" placeholder="Recheios do bolo">
-        <input type="text" id="sweets" placeholder="Docinho">
+const firebaseConfig = {
+  apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
+  authDomain: "vanilze-do-bolo-agendamentos.firebaseapp.com",
+  databaseURL: "https://vanilze-do-bolo-agendamentos-default-rtdb.firebaseio.com",
+  projectId: "vanilze-do-bolo-agendamentos",
+  storageBucket: "vanilze-do-bolo-agendamentos.firebasestorage.app",
+  messagingSenderId: "975342027639",
+  appId: "1:975342027639:web:61d5077c9e7f32d59f1772"
+};
 
-        <fieldset>
-          <legend>Adicionar mais docinhos?</legend>
-          <label><input type="radio" name="more-sweets" value="sim"> SIM</label>
-          <label><input type="radio" name="more-sweets" value="nao" checked> NÃO</label>
-        </fieldset>
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
-        <div id="extra-sweets-fields" class="hidden">
-          <input type="text" id="which-sweets" placeholder="Quais docinhos?">
-          <input type="number" id="sweets-quantity" placeholder="Quantidade" min="1">
-        </div>
+document.addEventListener("DOMContentLoaded", () => {
+  window.testFirebase = () => {
+    const teste = { mensagem: "Conexão funcionando!", hora: new Date().toISOString() };
+    push(ref(database, "agendamentos"), teste)
+      .then(() => alert("Teste salvo com sucesso!"))
+      .catch(err => console.error("Erro no teste:", err));
+  };
 
-        <label for="order-date">Data da encomenda:</label>
-        <input type="date" id="order-date" required>
+  document.querySelectorAll('input[name="more-sweets"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      document.getElementById("extra-sweets-fields").classList.toggle("hidden", e.target.value !== "sim");
+    });
+  });
 
-        <label for="reminder-time">Hora do lembrete:</label>
-        <input type="time" id="reminder-time" required>
+  document.getElementById("task-form").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-        <label for="delivery-time">Hora da entrega:</label>
-        <input type="time" id="delivery-time" required>
+    const maisDocinhos = document.querySelector('input[name="more-sweets"]:checked').value;
+    const agendamento = {
+      encomenda: document.getElementById("order-name").value,
+      cliente: document.getElementById("client-name").value,
+      whatsapp: document.getElementById("client-whatsapp").value,
+      recheios: document.getElementById("cake-fillings").value,
+      docinho: document.getElementById("sweets").value,
+      maisDocinhos: maisDocinhos,
+      quaisDocinhos: maisDocinhos === "sim" ? document.getElementById("which-sweets").value : "",
+      qtdDocinhos: maisDocinhos === "sim" ? document.getElementById("sweets-quantity").value : "",
+      data: document.getElementById("order-date").value,
+      lembrete: document.getElementById("reminder-time").value,
+      entrega: document.getElementById("delivery-time").value
+    };
 
-        <button type="submit">AGENDAR</button>
-        <button type="button" id="backToHomeFromFormBtn" class="secondary">VOLTAR</button>
-      </form>
-    </div>
+    console.log("Enviando agendamento:", agendamento);
 
-    <div id="tasks-screen" class="screen">
-      <h2>Tarefas Agendadas</h2>
-      <div id="task-list"></div>
-      <button id="backToHomeFromTasksBtn" class="secondary">VOLTAR</button>
-    </div>
-  </div>
-
-  <script type="module" src="script.js"></script>
-</body>
-</html>
+    push(ref(database, "agendamentos"), agendamento)
+      .then(() => {
+        alert("Agendamento salvo com sucesso!");
+        document.getElementById("task-form").reset();
+        document.getElementById("extra-sweets-fields").classList.add("hidden");
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar agendamento:", error);
+        alert("Erro ao salvar. Tente novamente.");
+      });
+  });
+});
