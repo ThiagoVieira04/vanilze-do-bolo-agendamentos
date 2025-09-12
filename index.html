@@ -7,37 +7,39 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Bem-vinda, Vanilze!</h1>
+  <div id="app">
+    <h1>Bem-vinda, Vanilze!</h1>
 
-  <form id="task-form">
-    <input id="order-name" placeholder="Nome da encomenda" required />
-    <input id="client-name" placeholder="Nome do cliente" required />
-    <input id="client-whatsapp" placeholder="WhatsApp do cliente" required />
-    <input id="cake-fillings" placeholder="Recheios do bolo" />
-    <input id="sweets" placeholder="Docinho" />
+    <form id="task-form">
+      <input id="order-name" type="text" placeholder="Nome da encomenda" required />
+      <input id="client-name" type="text" placeholder="Nome do cliente" required />
+      <input id="client-whatsapp" type="tel" placeholder="WhatsApp do cliente" required />
+      <input id="cake-fillings" type="text" placeholder="Recheios do bolo" />
+      <input id="sweets" type="text" placeholder="Docinho" />
 
-    <fieldset>
-      <legend>Mais docinhos?</legend>
-      <label><input type="radio" name="more-sweets" value="sim" /> Sim</label>
-      <label><input type="radio" name="more-sweets" value="nao" checked /> Não</label>
-    </fieldset>
+      <fieldset>
+        <legend>Mais docinhos?</legend>
+        <label><input type="radio" name="more-sweets" value="sim" /> Sim</label>
+        <label><input type="radio" name="more-sweets" value="nao" checked /> Não</label>
+      </fieldset>
 
-    <div id="extra-sweets-fields" class="hidden">
-      <input id="which-sweets" placeholder="Quais docinhos?" />
-      <input id="sweets-quantity" type="number" placeholder="Quantidade" min="1" />
-    </div>
+      <div id="extra-sweets-fields" class="hidden">
+        <input id="which-sweets" type="text" placeholder="Quais docinhos?" />
+        <input id="sweets-quantity" type="number" placeholder="Quantidade" min="1" />
+      </div>
 
-    <label for="order-date">Data da encomenda:</label>
-    <input id="order-date" type="date" required />
+      <label for="order-date">Data da encomenda:</label>
+      <input id="order-date" type="date" required />
 
-    <label for="reminder-time">Hora do lembrete:</label>
-    <input id="reminder-time" type="time" required />
+      <label for="reminder-time">Hora do lembrete:</label>
+      <input id="reminder-time" type="time" required />
 
-    <label for="delivery-time">Hora da entrega:</label>
-    <input id="delivery-time" type="time" required />
+      <label for="delivery-time">Hora da entrega:</label>
+      <input id="delivery-time" type="time" required />
 
-    <button type="submit">AGENDAR</button>
-  </form>
+      <button type="submit">AGENDAR</button>
+    </form>
+  </div>
 
   <script type="module" src="script.js"></script>
 </body>
