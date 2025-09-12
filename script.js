@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
@@ -169,9 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
         task.reminded = true;
-        // Atualiza o campo "reminded" no Firebase
         const updatedTask = { ...task, reminded: true };
-        push(ref(database, `agendamentos`), updatedTask);
+        set(ref(database, `agendamentos/${id}`), updatedTask);
       }
     });
   }
