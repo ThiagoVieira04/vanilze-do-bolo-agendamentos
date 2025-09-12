@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
@@ -14,64 +14,97 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Registrar Service Worker para PWA
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log("Service Worker registrado"))
-      .catch(err => console.error("Erro ao registrar SW:", err));
-  }
+// Navegação entre telas
+const screens = {
+  home: document.getElementById("home-screen"),
+  form: document.getElementById("form-screen"),
+  tasks: document.getElementById("tasks-screen")
+};
 
-  // ✅ Teste de conexão com Firebase
-  window.testFirebase = () => {
-    const teste = { mensagem: "Conexão funcionando!", hora: new Date().toISOString() };
-    push(ref(database, "agendamentos"), teste)
-      .then(() => alert("Teste salvo com sucesso!"))
-      .catch(err => console.error("Erro no teste:", err));
+function showScreen(screenName) {
+  Object.values(screens).forEach(screen => screen.classList.remove("active"));
+  screens[screenName].classList.add("active");
+}
+
+// Botões de navegação
+document.getElementById("goToFormBtn").addEventListener("click", () => showScreen("form"));
+document.getElementById("goToTasksBtn").addEventListener("click", () => {
+  showScreen("tasks");
+  loadTasks();
+});
+document.getElementById("backToHomeFromFormBtn").addEventListener("click", () => showScreen("home"));
+document.getElementById("backToHomeFromTasksBtn").addEventListener("click", () => showScreen("home"));
+
+// Mostrar campos extras de docinhos
+document.querySelectorAll('input[name="more-sweets"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    document.getElementById("extra-sweets-fields").classList.toggle("hidden", e.target.value !== "sim");
+  });
+});
+
+// Enviar agendamento
+document.getElementById("task-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const maisDocinhos = document.querySelector('input[name="more-sweets"]:checked').value;
+  const agendamento = {
+    encomenda: document.getElementById("order-name").value,
+    cliente: document.getElementById("client-name").value,
+    whatsapp: document.getElementById("client-whatsapp").value,
+    recheios: document.getElementById("cake-fillings").value,
+    docinho: document.getElementById("sweets").value,
+    maisDocinhos: maisDocinhos,
+    quaisDocinhos: maisDocinhos === "sim" ? document.getElementById("which-sweets").value : "",
+    qtdDocinhos: maisDocinhos === "sim" ? document.getElementById("sweets-quantity").value : "",
+    data: document.getElementById("order-date").value,
+    lembrete: document.getElementById("reminder-time").value,
+    entrega: document.getElementById("delivery-time").value,
+    criadoEm: new Date().toISOString()
   };
 
-  // ✅ Mostrar campos extras de docinhos
-  document.querySelectorAll('input[name="more-sweets"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      document.getElementById("extra-sweets-fields").classList.toggle("hidden", e.target.value !== "sim");
+  push(ref(database, "agendamentos"), agendamento)
+    .then(() => {
+      alert("Agendamento salvo com sucesso!");
+      document.getElementById("task-form").reset();
+      document.getElementById("extra-sweets-fields").classList.add("hidden");
+      showScreen("home");
+    })
+    .catch((error) => {
+      console.error("Erro ao salvar agendamento:", error);
+      alert("Erro ao salvar. Tente novamente.");
+    });
+});
+
+// Carregar agendamentos
+function loadTasks() {
+  const taskList = document.getElementById("task-list");
+  taskList.innerHTML = "<p>Carregando...</p>";
+
+  onValue(ref(database, "agendamentos"), snapshot => {
+    taskList.innerHTML = "";
+    if (!snapshot.exists()) {
+      taskList.innerHTML = "<p>Nenhum agendamento encontrado.</p>";
+      return;
+    }
+
+    const tasks = snapshot.val();
+    Object.entries(tasks).forEach(([id, task]) => {
+      const div = document.createElement("div");
+      div.className = "task-item";
+      div.innerHTML = `
+        <h3>${task.encomenda}</h3>
+        <p><strong>Cliente:</strong> ${task.cliente}</p>
+        <p><strong>WhatsApp:</strong> ${task.whatsapp}</p>
+        <p><strong>Recheios:</strong> ${task.recheios}</p>
+        <p><strong>Docinho:</strong> ${task.docinho}</p>
+        ${task.maisDocinhos === "sim" ? `
+          <p><strong>Extras:</strong> ${task.quaisDocinhos} (${task.qtdDocinhos})</p>
+        ` : ""}
+        <p><strong>Data:</strong> ${task.data}</p>
+        <p><strong>Lembrete:</strong> ${task.lembrete}</p>
+        <p><strong>Entrega:</strong> ${task.entrega}</p>
+      `;
+      taskList.appendChild(div);
     });
   });
-
-  // ✅ Envio do formulário
-  const form = document.getElementById("task-form");
-  if (form) {
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const maisDocinhos = document.querySelector('input[name="more-sweets"]:checked')?.value || "nao";
-      const agendamento = {
-        encomenda: document.getElementById("order-name")?.value || "",
-        cliente: document.getElementById("client-name")?.value || "",
-        whatsapp: document.getElementById("client-whatsapp")?.value || "",
-        recheios: document.getElementById("cake-fillings")?.value || "",
-        docinho: document.getElementById("sweets")?.value || "",
-        maisDocinhos: maisDocinhos,
-        quaisDocinhos: maisDocinhos === "sim" ? document.getElementById("which-sweets")?.value || "" : "",
-        qtdDocinhos: maisDocinhos === "sim" ? document.getElementById("sweets-quantity")?.value || "" : "",
-        data: document.getElementById("order-date")?.value || "",
-        lembrete: document.getElementById("reminder-time")?.value || "",
-        entrega: document.getElementById("delivery-time")?.value || ""
-      };
-
-      console.log("Enviando agendamento:", agendamento);
-
-      push(ref(database, "agendamentos"), agendamento)
-        .then(() => {
-          alert("Agendamento salvo com sucesso!");
-          form.reset();
-          document.getElementById("extra-sweets-fields")?.classList.add("hidden");
-        })
-        .catch((error) => {
-          console.error("Erro ao salvar agendamento:", error);
-          alert("Erro ao salvar. Tente novamente.");
-        });
-    });
-  } else {
-    console.error("Formulário 'task-form' não encontrado no DOM.");
-  }
-});
+}
