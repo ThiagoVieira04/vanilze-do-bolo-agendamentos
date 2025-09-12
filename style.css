@@ -37,7 +37,9 @@ body {
 
 .logo {
     max-width: 200px;
-    margin-bottom: 20px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 h1, h2 {
