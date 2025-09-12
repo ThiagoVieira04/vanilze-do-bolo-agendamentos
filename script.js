@@ -68,6 +68,23 @@ document.getElementById("task-form").addEventListener("submit", function(e) {
       document.getElementById("task-form").reset();
       document.getElementById("extra-sweets-fields").classList.add("hidden");
       showScreen("home");
+
+      // ✅ Notificação no navegador
+      if (Notification.permission === "granted") {
+        new Notification("Pedido agendado com sucesso!", {
+          body: "Você receberá um lembrete no horário escolhido.",
+          icon: "logo.png"
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            new Notification("Pedido agendado com sucesso!", {
+              body: "Você receberá um lembrete no horário escolhido.",
+              icon: "logo.png"
+            });
+          }
+        });
+      }
     })
     .catch((error) => {
       console.error("Erro ao salvar agendamento:", error);
