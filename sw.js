@@ -1,4 +1,3 @@
-// ===== Configuração do cache offline =====
 const CACHE_NAME = 'vanilze-cache-v1';
 const FILES_TO_CACHE = [
   '/',
@@ -10,21 +9,21 @@ const FILES_TO_CACHE = [
   '/manifest.json'
 ];
 
-// ===== Instalação e cache inicial =====
+// Instalação e cache inicial
 self.addEventListener('install', event => {
-  console.log('Service Worker instalado');
+  console.log('✅ Service Worker instalado');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
   );
   self.skipWaiting();
 });
 
-// ===== Ativação e limpeza de caches antigos =====
+// Ativação e limpeza de caches antigos
 self.addEventListener('activate', event => {
-  console.log('Service Worker ativado');
+  console.log('✅ Service Worker ativado');
   event.waitUntil(
-    caches.keys().then(keyList =>
-      Promise.all(keyList.map(key => {
+    caches.keys().then(keys =>
+      Promise.all(keys.map(key => {
         if (key !== CACHE_NAME) {
           return caches.delete(key);
         }
@@ -34,20 +33,17 @@ self.addEventListener('activate', event => {
   return self.clients.claim();
 });
 
-// ===== Intercepta requisições para servir do cache =====
+// Intercepta requisições para servir do cache
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
+    caches.match(event.request).then(response => response || fetch(event.request))
   );
 });
 
-// ===== Recebe mensagens do script principal para lembretes locais =====
+// Recebe mensagens locais do script principal
 self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SHOW_REMINDER') {
+  if (event.data?.type === 'SHOW_REMINDER') {
     const task = event.data.task;
-
     self.registration.showNotification('Lembrete de Encomenda!', {
       body: `Pedido: ${task.orderName}\nCliente: ${task.clientName}\nEntrega hoje às ${task.deliveryTime}.`,
       icon: '/logo.png',
@@ -58,11 +54,10 @@ self.addEventListener('message', event => {
   }
 });
 
-// ===== Recebe notificações push do Firebase (FCM) =====
+// Recebe notificações push do Firebase
 self.addEventListener('push', event => {
   if (event.data) {
     const data = event.data.json();
-
     const title = data.notification?.title || 'Nova notificação';
     const options = {
       body: data.notification?.body || '',
@@ -71,14 +66,11 @@ self.addEventListener('push', event => {
       vibrate: [200, 100, 200],
       data: data.data || {}
     };
-
-    event.waitUntil(
-      self.registration.showNotification(title, options)
-    );
+    event.waitUntil(self.registration.showNotification(title, options));
   }
 });
 
-// ===== Clique na notificação =====
+// Clique na notificação
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
