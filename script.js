@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
@@ -13,6 +14,25 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const messaging = getMessaging(app); // ✅ Adicionado FCM
+
+// Solicitar permissão para notificações e gerar token
+Notification.requestPermission().then(permission => {
+  if (permission === "granted") {
+    getToken(messaging, {
+      vapidKey: "BNS0MP9B27r1SwgYtTeGqqwvDqqj4KzIzbdO8ot3Fnv6d5XkjeNS-Npc8zDBcyCweNSub-DFyFvc5FgE-TuAlu8" // 🔑 Substitua pela sua chave VAPID do Firebase
+    })
+    .then(currentToken => {
+      if (currentToken) {
+        console.log("Token FCM:", currentToken);
+        // Você pode salvar esse token no Firebase para enviar notificações personalizadas
+      } else {
+        console.warn("Token não disponível.");
+      }
+    })
+    .catch(err => console.error("Erro ao gerar token:", err));
+  }
+});
 
 // Navegação entre telas
 const screens = {
