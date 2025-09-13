@@ -9,21 +9,26 @@ if ('serviceWorker' in navigator) {
         const messaging = firebase.messaging();
         messaging.useServiceWorker(reg);
       }
+
+      // Ativa botão de permissão de notificação após registro
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('ativarNotificacoes');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            Notification.requestPermission().then(permission => {
+              if (permission === 'granted') {
+                console.log('✅ Permissão de notificação concedida');
+              } else {
+                console.warn('⚠️ Permissão de notificação negada');
+              }
+            });
+          });
+        }
+      });
     })
     .catch(err => {
       console.error('❌ Erro ao registrar Service Worker:', err);
     });
-}
-
-// Solicita permissão para notificações
-if ('Notification' in window) {
-  Notification.requestPermission().then(permission => {
-    if (permission === 'granted') {
-      console.log('✅ Permissão de notificação concedida');
-    } else {
-      console.warn('⚠️ Permissão de notificação negada');
-    }
-  });
 }
 
 // Envia lembrete local via Service Worker
