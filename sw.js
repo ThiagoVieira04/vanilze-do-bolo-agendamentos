@@ -43,7 +43,7 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// ===== Recebe mensagens do script principal para lembretes =====
+// ===== Recebe mensagens do script principal para lembretes locais =====
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SHOW_REMINDER') {
     const task = event.data.task;
@@ -55,6 +55,26 @@ self.addEventListener('message', event => {
       vibrate: [200, 100, 200],
       data: { dateOfArrival: Date.now(), primaryKey: task.id }
     });
+  }
+});
+
+// ===== Recebe notificações push do Firebase (FCM) =====
+self.addEventListener('push', event => {
+  if (event.data) {
+    const data = event.data.json();
+
+    const title = data.notification?.title || 'Nova notificação';
+    const options = {
+      body: data.notification?.body || '',
+      icon: data.notification?.icon || '/logo.png',
+      badge: '/logo.png',
+      vibrate: [200, 100, 200],
+      data: data.data || {}
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(title, options)
+    );
   }
 });
 
