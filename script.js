@@ -3,6 +3,12 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
     .then(reg => {
       console.log('✅ Service Worker registrado com escopo:', reg.scope);
+
+      // Se estiver usando Firebase Messaging, vincule aqui:
+      if (window.firebase?.messaging) {
+        const messaging = firebase.messaging();
+        messaging.useServiceWorker(reg);
+      }
     })
     .catch(err => {
       console.error('❌ Erro ao registrar Service Worker:', err);
@@ -10,7 +16,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // Solicita permissão para notificações
-if ('Notification' in window && Notification.permission !== 'granted') {
+if ('Notification' in window) {
   Notification.requestPermission().then(permission => {
     if (permission === 'granted') {
       console.log('✅ Permissão de notificação concedida');
@@ -20,7 +26,7 @@ if ('Notification' in window && Notification.permission !== 'granted') {
   });
 }
 
-// Exemplo de envio de lembrete local (simulação)
+// Envia lembrete local via Service Worker
 function enviarLembreteLocal(task) {
   if (navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({
