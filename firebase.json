@@ -14,5 +14,22 @@
   ],
   "database": {
     "rules": "database.rules.json"
-  }
+  },
+  "hosting": [
+    {
+      "site": "vanilze-do-bolo-agendamentos-5620e",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
 }

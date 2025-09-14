@@ -11,12 +11,11 @@ const firebaseConfig = {
   projectId: "vanilze-do-bolo-agendamentos",
   storageBucket: "vanilze-do-bolo-agendamentos.firebasestorage.app",
   messagingSenderId: "975342027639",
-  appId: "1:975342027639:web:61d5077c9e7f32d59f1772"
-  };
+  appId: "1:975342027639:web:148f836f0dc66e7f9f1772"
+};
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const messaging = getMessaging(app);
 
 // Registro do Service Worker
 if ('serviceWorker' in navigator) {

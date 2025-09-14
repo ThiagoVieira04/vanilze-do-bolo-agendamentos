@@ -1,89 +1,96 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vanilze do Bolo - Agendamentos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.2.1/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.2.1/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.2.1/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+  <div id="app">
+    <!-- Tela Inicial -->
+    <div id="home-screen" class="screen active">
+      <img src="/logo.png" alt="Logo Vanilze do Bolo" class="logo">
+      <h1>Bem vinda Vanilze</h1>
+      <button id="goToFormBtn">TOQUE AQUI PARA AGENDAR SUA TAREFA!</button>
+      <button id="goToTasksBtn" class="secondary">VER AGENDAMENTOS</button>
+      <button id="ativarNotificacoes" class="secondary">ATIVAR NOTIFICAÇÕES</button>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+    <!-- Tela de Cadastro de Tarefa -->
+    <div id="form-screen" class="screen">
+      <form id="task-form">
+        <h2>DIGITE O PEDIDO!</h2>
+        <input type="text" id="order-name" placeholder="Nome da encomenda" required>
+        <input type="text" id="client-name" placeholder="Nome do cliente" required>
+        <input type="tel" id="client-whatsapp" placeholder="WhatsApp do cliente" required>
+        <input type="text" id="cake-fillings" placeholder="Recheios do bolo">
+        <input type="text" id="sweets" placeholder="Docinho">
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
+        <fieldset>
+          <legend>Adicionar mais docinhos?</legend>
+          <label><input type="radio" name="more-sweets" value="sim"> SIM</label>
+          <label><input type="radio" name="more-sweets" value="nao" checked> NÃO</label>
+        </fieldset>
+
+        <div id="extra-sweets-fields" class="hidden">
+          <input type="text" id="which-sweets" placeholder="Quais docinhos?">
+          <input type="number" id="sweets-quantity" placeholder="Quantidade" min="1">
+        </div>
+
+        <label for="order-date">Data da encomenda:</label>
+        <input type="date" id="order-date" required>
+
+        <label for="reminder-time">Hora do lembrete:</label>
+        <input type="time" id="reminder-time" required>
+
+        <label for="delivery-time">Hora da entrega da encomenda:</label>
+        <input type="time" id="delivery-time" required>
+
+        <button type="submit">AGENDAR</button>
+        <button type="button" id="backToHomeFromFormBtn" class="secondary">VOLTAR</button>
+      </form>
+    </div>
+
+    <!-- Tela de Visualização de Tarefas -->
+    <div id="tasks-screen" class="screen">
+      <h2>Tarefas Agendadas</h2>
+      <div id="task-list"></div>
+      <button id="backToHomeFromTasksBtn" class="secondary">VOLTAR</button>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+
+  <script>
+    // Registro do Service Worker correto
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => {
+          console.log("✅ Service Worker registrado com escopo:", reg.scope);
+        })
+        .catch(err => {
+          console.error("❌ Erro ao registrar Service Worker:", err);
+        });
+    }
+
+    // Solicita permissão de notificação ao clicar no botão
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('ativarNotificacoes');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              console.log('✅ Permissão de notificação concedida');
+            } else {
+              console.warn('⚠️ Permissão de notificação negada');
+            }
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
 </html>
