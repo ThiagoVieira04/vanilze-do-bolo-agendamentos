@@ -14,8 +14,10 @@ const firebaseConfig = {
   appId: "1:975342027639:web:148f836f0dc66e7f9f1772"
 };
 
-// Initialize Firebase
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const messaging = getMessaging(app);
 
 // Registro do Service Worker
 if ('serviceWorker' in navigator) {
@@ -23,16 +25,16 @@ if ('serviceWorker' in navigator) {
     .then(reg => {
       console.log('✅ Service Worker registrado com escopo:', reg.scope);
 
-      // Vincula Firebase Messaging ao Service Worker
       if (window.firebase?.messaging) {
         messaging.useServiceWorker(reg);
       }
 
-      // Ativa botão de permissão de notificação após registro
       document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('ativarNotificacoes');
-        if (btn) {
-          btn.addEventListener('click', () => {
+        const btnNotificacao = document.getElementById('ativarNotificacoes');
+        const btnAgendar = document.getElementById('agendarTarefa');
+
+        if (btnNotificacao) {
+          btnNotificacao.addEventListener('click', () => {
             Notification.requestPermission().then(permission => {
               if (permission === 'granted') {
                 console.log('✅ Permissão de notificação concedida');
@@ -40,6 +42,17 @@ if ('serviceWorker' in navigator) {
                 console.warn('⚠️ Permissão de notificação negada');
               }
             });
+          });
+        }
+
+        if (btnAgendar) {
+          btnAgendar.addEventListener('click', () => {
+            const tarefa = {
+              nome: "Vanilze",
+              horario: new Date().toISOString()
+            };
+            salvarAgendamento(tarefa);
+            enviarLembreteLocal(tarefa);
           });
         }
       });

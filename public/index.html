@@ -1,96 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vanilze do Bolo - Agendamentos</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanilze de Bolê</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <img src="logo.png" alt="Logo Vanilze de Bolê">
+    <h1>Vanilze de Bolê - Bolos, Doces e Cupcakes</h1>
+    <h2>Bem vinda Vanilze</h2>
+  </header>
 
-  <div id="app">
-    <!-- Tela Inicial -->
-    <div id="home-screen" class="screen active">
-      <img src="/logo.png" alt="Logo Vanilze do Bolo" class="logo">
-      <h1>Bem vinda Vanilze</h1>
-      <button id="goToFormBtn">TOQUE AQUI PARA AGENDAR SUA TAREFA!</button>
-      <button id="goToTasksBtn" class="secondary">VER AGENDAMENTOS</button>
-      <button id="ativarNotificacoes" class="secondary">ATIVAR NOTIFICAÇÕES</button>
-    </div>
-
-    <!-- Tela de Cadastro de Tarefa -->
-    <div id="form-screen" class="screen">
-      <form id="task-form">
-        <h2>DIGITE O PEDIDO!</h2>
-        <input type="text" id="order-name" placeholder="Nome da encomenda" required>
-        <input type="text" id="client-name" placeholder="Nome do cliente" required>
-        <input type="tel" id="client-whatsapp" placeholder="WhatsApp do cliente" required>
-        <input type="text" id="cake-fillings" placeholder="Recheios do bolo">
-        <input type="text" id="sweets" placeholder="Docinho">
-
-        <fieldset>
-          <legend>Adicionar mais docinhos?</legend>
-          <label><input type="radio" name="more-sweets" value="sim"> SIM</label>
-          <label><input type="radio" name="more-sweets" value="nao" checked> NÃO</label>
-        </fieldset>
-
-        <div id="extra-sweets-fields" class="hidden">
-          <input type="text" id="which-sweets" placeholder="Quais docinhos?">
-          <input type="number" id="sweets-quantity" placeholder="Quantidade" min="1">
-        </div>
-
-        <label for="order-date">Data da encomenda:</label>
-        <input type="date" id="order-date" required>
-
-        <label for="reminder-time">Hora do lembrete:</label>
-        <input type="time" id="reminder-time" required>
-
-        <label for="delivery-time">Hora da entrega da encomenda:</label>
-        <input type="time" id="delivery-time" required>
-
-        <button type="submit">AGENDAR</button>
-        <button type="button" id="backToHomeFromFormBtn" class="secondary">VOLTAR</button>
-      </form>
-    </div>
-
-    <!-- Tela de Visualização de Tarefas -->
-    <div id="tasks-screen" class="screen">
-      <h2>Tarefas Agendadas</h2>
-      <div id="task-list"></div>
-      <button id="backToHomeFromTasksBtn" class="secondary">VOLTAR</button>
-    </div>
-  </div>
+  <main>
+    <button id="agendarTarefa">TOQUE AQUI PARA AGENDAR SUA TAREFA!</button>
+    <button id="verAgendamentos">VER AGENDAMENTOS</button>
+    <button id="ativarNotificacoes">ATIVAR NOTIFICAÇÕES</button>
+  </main>
 
   <script type="module" src="script.js"></script>
-
-  <script>
-    // Registro do Service Worker correto
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => {
-          console.log("✅ Service Worker registrado com escopo:", reg.scope);
-        })
-        .catch(err => {
-          console.error("❌ Erro ao registrar Service Worker:", err);
-        });
-    }
-
-    // Solicita permissão de notificação ao clicar no botão
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('ativarNotificacoes');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              console.log('✅ Permissão de notificação concedida');
-            } else {
-              console.warn('⚠️ Permissão de notificação negada');
-            }
-          });
-        });
-      }
-    });
-  </script>
-
 </body>
 </html>
