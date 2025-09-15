@@ -21,6 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
     .catch(err => console.error('❌ Falha ao registrar Service Worker:', err));
 
+  // ✅ Solicita permissão de notificação automaticamente
+  if ('Notification' in window && Notification.permission !== 'granted') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        console.log('✅ Notificações ativadas automaticamente');
+      } else {
+        console.warn('⚠️ Notificações não permitidas');
+      }
+    });
+  }
+
   const screens = {
     home: document.getElementById('home-screen'),
     form: document.getElementById('form-screen'),
@@ -31,8 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     goToForm: document.getElementById('goToFormBtn'),
     goToTasks: document.getElementById('goToTasksBtn'),
     backToHomeFromForm: document.getElementById('backToHomeFromFormBtn'),
-    backToHomeFromTasks: document.getElementById('backToHomeFromTasksBtn'),
-    ativarNotificacoes: document.getElementById('ativarNotificacoes')
+    backToHomeFromTasks: document.getElementById('backToHomeFromTasksBtn')
   };
 
   const taskForm = document.getElementById('task-form');
@@ -57,18 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     radio.addEventListener('change', (e) => {
       extraSweetsFields.classList.toggle('hidden', e.target.value === 'nao');
     });
-  });
-
-  buttons.ativarNotificacoes.addEventListener('click', () => {
-    if ('Notification' in window) {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          console.log('✅ Notificações ativadas');
-        } else {
-          console.warn('⚠️ Permissão negada');
-        }
-      });
-    }
   });
 
   taskForm.addEventListener('submit', (e) => {
@@ -176,5 +174,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  setInterval(checkReminders, 10000); // verifica a cada 10 segundos
+  setInterval(checkReminders, 1000); // verifica a cada 1 segundo
 });
