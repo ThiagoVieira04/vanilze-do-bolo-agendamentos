@@ -1,11 +1,14 @@
 {
   "name": "Vanilze do Bolo",
   "short_name": "Vanilze",
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#FF69B4",
   "orientation": "portrait",
+  "lang": "pt-BR",
+  "description": "Sistema de agendamentos da Vanilze do Bolo. Organize pedidos, lembretes e entregas com facilidade.",
   "icons": [
     {
       "src": "/logo.png",
@@ -19,4 +22,3 @@
     }
   ]
 }
-
