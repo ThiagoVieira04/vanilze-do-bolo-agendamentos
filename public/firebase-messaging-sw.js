@@ -1,6 +1,6 @@
 // firebase-messaging-sw.js
-importScripts('https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging-compat.js');
 
 firebase.initializeApp({
   apiKey: "AIzaSyCzy3Vlqe85qq1DPS4jWuvotden0uLC1lM",
@@ -12,8 +12,13 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(payload => {
-  self.registration.showNotification(payload.notification.title, {
-    body: payload.notification.body,
-    icon: 'logo.png'
-  });
+  if (payload.notification) {
+    const { title, body } = payload.notification;
+    self.registration.showNotification(title || 'Nova mensagem', {
+      body: body || 'Você recebeu uma nova notificação.',
+      icon: 'logo.png'
+    });
+  } else {
+    console.warn('⚠️ Payload sem campo notification:', payload);
+  }
 });
