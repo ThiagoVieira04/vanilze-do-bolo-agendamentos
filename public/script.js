@@ -16,6 +16,11 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ✅ Registra o Service Worker
+  navigator.serviceWorker.register('/sw.js')
+    .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
+    .catch(err => console.error('❌ Falha ao registrar Service Worker:', err));
+
   const screens = {
     home: document.getElementById('home-screen'),
     form: document.getElementById('form-screen'),
@@ -35,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const moreSweetsRadios = document.querySelectorAll('input[name="more-sweets"]');
   const extraSweetsFields = document.getElementById('extra-sweets-fields');
 
-  // Navegação
   function showScreen(screenName) {
     Object.values(screens).forEach(screen => screen.classList.remove('active'));
     screens[screenName].classList.add('active');
@@ -49,14 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
   buttons.backToHomeFromForm.addEventListener('click', () => showScreen('home'));
   buttons.backToHomeFromTasks.addEventListener('click', () => showScreen('home'));
 
-  // Mostrar campos extras
   moreSweetsRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {
       extraSweetsFields.classList.toggle('hidden', e.target.value === 'nao');
     });
   });
 
-  // Permissão de notificação
   buttons.ativarNotificacoes.addEventListener('click', () => {
     if ('Notification' in window) {
       Notification.requestPermission().then(permission => {
@@ -69,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Salvar tarefa
   taskForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const moreSweetsValue = document.querySelector('input[name="more-sweets"]:checked').value;
@@ -97,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.error('❌ Erro ao salvar:', err));
   });
 
-  // Renderizar tarefas
   function renderTasks() {
     const agendamentosRef = ref(db, 'agendamentos');
     onValue(agendamentosRef, snapshot => {
@@ -139,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Notificações automáticas
   function showNotification(task) {
     if (Notification.permission === 'granted') {
       new Notification('Lembrete de Encomenda!', {
@@ -152,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function checkReminders() {
     const now = new Date();
     const today = now.toISOString().split('T')[0];
-    const currentTime = now.toTimeString().substring(0, 5);
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     const agendamentosRef = ref(db, 'agendamentos');
     onValue(agendamentosRef, snapshot => {
@@ -160,9 +159,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const task = child.val();
         const taskId = child.key;
 
+        const [reminderHour, reminderMinute] = task.reminderTime.split(':').map(Number);
+        const reminderMinutes = reminderHour * 60 + reminderMinute;
+        const diff = Math.abs(currentMinutes - reminderMinutes);
+
         if (
           task.orderDate === today &&
-          task.reminderTime === currentTime &&
+          diff <= 1 &&
           !task.reminded
         ) {
           showNotification(task);
@@ -173,5 +176,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  setInterval(checkReminders, 30000); // verifica a cada 30 segundos
+  setInterval(checkReminders, 10000); // verifica a cada 10 segundos
 });
