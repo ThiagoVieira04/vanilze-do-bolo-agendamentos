@@ -21,16 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
     .catch(err => console.error('❌ Falha ao registrar Service Worker:', err));
 
-  // ✅ Solicita permissão de notificação automaticamente
-  if ('Notification' in window && Notification.permission !== 'granted') {
-    Notification.requestPermission().then(permission => {
-      if (permission === 'granted') {
-        console.log('✅ Notificações ativadas automaticamente');
-      } else {
-        console.warn('⚠️ Notificações não permitidas');
-      }
-    });
+  // ✅ Alerta para o usuário tocar na tela
+  if (Notification.permission !== 'granted') {
+    alert('Toque na tela para ativar os lembretes de entrega!');
   }
+
+  // ✅ Solicita permissão de notificação após o primeiro clique
+  document.body.addEventListener('click', () => {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission().then(permission => {
+        console.log('🔔 Permissão de notificação:', permission);
+      });
+    }
+  }, { once: true });
 
   const screens = {
     home: document.getElementById('home-screen'),

@@ -59,13 +59,16 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
   if (event.data?.type === 'SHOW_REMINDER') {
     const task = event.data.task;
-    self.registration.showNotification('Lembrete de Encomenda!', {
-      body: `Pedido: ${task.orderName}\nCliente: ${task.clientName}\nEntrega hoje às ${task.deliveryTime}.`,
-      icon: '/logo.png',
-      badge: '/logo.png',
-      vibrate: [200, 100, 200],
-      data: { dateOfArrival: Date.now(), primaryKey: task.id }
-    });
+    if (self.registration && self.registration.showNotification) {
+      self.registration.showNotification('Lembrete de Encomenda!', {
+        body: `Pedido: ${task.orderName}\nCliente: ${task.clientName}\nEntrega hoje às ${task.deliveryTime}.`,
+        icon: '/logo.png',
+        badge: '/logo.png',
+        vibrate: [200, 100, 200],
+        requireInteraction: true,
+        data: { dateOfArrival: Date.now(), primaryKey: task.id }
+      });
+    }
   }
 });
 
@@ -79,9 +82,12 @@ self.addEventListener('push', event => {
       icon: data.notification?.icon || '/logo.png',
       badge: '/logo.png',
       vibrate: [200, 100, 200],
+      requireInteraction: true,
       data: data.data || {}
     };
-    event.waitUntil(self.registration.showNotification(title, options));
+    if (self.registration && self.registration.showNotification) {
+      event.waitUntil(self.registration.showNotification(title, options));
+    }
   }
 });
 
@@ -89,12 +95,15 @@ self.addEventListener('push', event => {
 messaging.onBackgroundMessage(payload => {
   if (payload.notification) {
     const { title, body } = payload.notification;
-    self.registration.showNotification(title || 'Nova mensagem', {
-      body: body || 'Você recebeu uma nova notificação.',
-      icon: '/logo.png',
-      badge: '/logo.png',
-      vibrate: [200, 100, 200]
-    });
+    if (self.registration && self.registration.showNotification) {
+      self.registration.showNotification(title || 'Nova mensagem', {
+        body: body || 'Você recebeu uma nova notificação.',
+        icon: '/logo.png',
+        badge: '/logo.png',
+        vibrate: [200, 100, 200],
+        requireInteraction: true
+      });
+    }
   } else {
     console.warn('⚠️ Payload sem campo notification:', payload);
   }
